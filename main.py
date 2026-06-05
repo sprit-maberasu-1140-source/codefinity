@@ -1,15 +1,30 @@
-import numpy as np
+class MultiHeadAttention:
+    def __init__(self, hidden_dim):
+        self.hidden_dim = hidden_dim
+    def __call__(self, x):
+        # Dummy self-attention: just returns input for demonstration
+        return x
 
-def relu(x):
-    return np.maximum(0, x)
+class FeedForward:
+    def __init__(self, hidden_dim):
+        self.hidden_dim = hidden_dim
+    def __call__(self, x):
+        # Dummy feed-forward: just returns input for demonstration
+        return x
 
-def position_wise_ffn(x, W1, b1, W2, b2):
-    # x: (batch_size, seq_len, d_model)
-    # W1: (d_model, d_ff)
-    # b1: (1, d_ff)
-    # W2: (d_ff, d_model)
-    # b2: (1, d_model)
-    out1 = np.matmul(x, W1) + b1  # (batch_size, seq_len, d_ff)
-    out1 = relu(out1)
-    out2 = np.matmul(out1, W2) + b2  # (batch_size, seq_len, d_model)
-    return out2
+class TransformerEncoderBlock:
+    def __init__(self, hidden_dim):
+        # Initializing the self-attention layer
+        self.attention = MultiHeadAttention(hidden_dim)
+        
+        # Initializing the feed-forward network
+        self.ffn = FeedForward(hidden_dim)
+
+    def forward(self, x):
+        # Applying self-attention
+        attn_output = self.attention(x)
+        
+        # Processing through the feed-forward network
+        output = self.ffn(attn_output)
+        
+        return output
