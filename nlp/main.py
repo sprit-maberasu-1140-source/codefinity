@@ -1,34 +1,33 @@
-# Step 1: Tokenize text into lowercase words
-def tokenize(text):
-    return text.lower().split()
+import numpy as np
+import matplotlib.pyplot as plt
 
-# Step 2: Build vocabulary from list of texts
-def build_vocab(texts):
-    vocab = {}
-    idx = 1  # 0 reserved for padding
-    for text in texts:
-        for word in tokenize(text):
-            if word not in vocab:
-                vocab[word] = idx
-                idx += 1
-    return vocab
+sentence = "Attention helps models understand context."
+tokens = sentence.split()
 
-# Step 3: Convert text to sequence of word indices, pad/truncate to fixed length
-def text_to_sequence(text, vocab, max_len):
-    seq = [vocab.get(word, 0) for word in tokenize(text)]
-    if len(seq) < max_len:
-        seq += [0] * (max_len - len(seq))
-    else:
-        seq = seq[:max_len]
-    return seq
+attention = [
+    [0.25, 0.15, 0.20, 0.20, 0.20],
+    [0.10, 0.40, 0.15, 0.20, 0.15],
+    [0.15, 0.10, 0.35, 0.20, 0.20],
+    [0.20, 0.15, 0.20, 0.25, 0.20],
+    [0.15, 0.20, 0.20, 0.20, 0.25],
+]
 
-# Example test cases:
-example_text = "Hello World!"
-print(tokenize(example_text))
+attention = np.array(attention)
 
-texts = ["Hello world", "world of NLP"]
-vocab = build_vocab(texts)
-print(vocab)
+fig, ax = plt.subplots(figsize=(8, 6))
+im = ax.imshow(attention, cmap="viridis")
 
-seq = text_to_sequence("Hello NLP", vocab, 4)
-print(seq)
+ax.set_xticks(np.arange(len(tokens)))
+ax.set_yticks(np.arange(len(tokens)))
+ax.set_xticklabels(tokens, rotation=45, ha="right")
+ax.set_yticklabels(tokens)
+
+cbar = plt.colorbar(im, ax=ax)
+cbar.set_label("Attention Weight")
+
+ax.set_title("Attention Heatmap")
+ax.set_xlabel("Key Tokens")
+ax.set_ylabel("Query Tokens")
+
+plt.tight_layout()
+plt.show()
