@@ -1,41 +1,29 @@
-def calculate_association_metrics(transactions, item_a, item_b):
-    total_transactions = len(transactions)
-    support_ab = 0
-    support_a = 0
-    support_b = 0
+import pandas as pd
+from collections import Counter
 
+def find_frequent_single_items(transactions, min_support):
+    item_counts = Counter()
     for transaction in transactions:
-        if item_a in transaction and item_b in transaction:
-            support_ab += 1
-        if item_a in transaction:
-            support_a += 1
-        if item_b in transaction:
-            support_b += 1
-
-    support = support_ab / total_transactions
-    confidence = support_ab / support_a if support_a > 0 else 0
-    lift = (confidence / (support_b / total_transactions)) if support_b > 0 else 0
-
-    result = {
-        "support": support,
-        "confidence": confidence,
-        "lift": lift
-    }
+        item_counts.update(transaction)
+    result = [(item, count) for item, count in item_counts.items() if count >= min_support]
+    result.sort(key=lambda x: (-x[1], x[0]))
     return result
 
-# Sample transaction ledger
+# Sample synthetic dataset
 transactions = [
-    ["milk", "bread", "butter"],
-    ["bread", "butter"],
-    ["milk", "bread"],
-    ["milk", "eggs"],
-    ["bread", "eggs"],
-    ["milk", "bread", "butter", "eggs"]
+    ['milk', 'bread', 'eggs'],
+    ['bread', 'butter'],
+    ['milk', 'bread', 'butter', 'eggs'],
+    ['bread', 'eggs'],
+    ['milk', 'bread', 'eggs'],
+    ['butter', 'eggs'],
+    ['milk', 'bread'],
+    ['milk', 'eggs'],
+    ['bread', 'butter'],
+    ['milk', 'bread', 'eggs', 'butter']
 ]
 
-# Example usage
-metrics_milk_bread = calculate_association_metrics(transactions, "milk", "bread")
-print(metrics_milk_bread)
+min_support = 3
 
-metrics_bread_butter = calculate_association_metrics(transactions, "bread", "butter")
-print(metrics_bread_butter)
+frequent_items = find_frequent_single_items(transactions, min_support)
+print(frequent_items)
